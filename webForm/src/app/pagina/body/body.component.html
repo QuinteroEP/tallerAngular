@@ -1,0 +1,27 @@
+<div id="header">
+    <h1>Buscar Publicaciones</h1>
+
+    <form #form="ngForm" (ngSubmit)="buscarUsuario()">
+        <label for="">Nombre del Usuario</label>
+        <input type="text" name="usuario" [(ngModel)]="txtUser" name="usuario">
+    
+        <button type="submit">Buscar</button>
+    </form>
+</div>
+
+ <ng-container *ngIf="usuario">
+    <div id="body">
+        <h2>Publicaciones del usuario {{ usuario.firstName }} {{ usuario.lastName }}</h2>
+
+        <div id="posts">
+            <ng-container *ngIf="posts">
+                <template *ngFor="let item of posts">
+                    <li>
+                        <p>Titulo: {{ item.title }}</p>
+                    </li>
+                </template>
+                
+            </ng-container>
+        </div>
+    </div>
+</ng-container>
