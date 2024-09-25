@@ -1,7 +1,5 @@
 import { Comentario } from "./comentarios";
 
-
-
 export interface Publicacion {
   id: number;
   title: string;
@@ -12,4 +10,5 @@ export interface Publicacion {
     dislikes: number;
   };
   comentarios: Comentario[];
+  mostrarComentarios?: boolean; // Nueva propiedad para controlar visibilidad
 }

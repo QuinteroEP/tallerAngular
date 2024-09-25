@@ -8,10 +8,15 @@
         <div *ngIf="publicacion.reactions">
           <p><span class="reactions-icon">❤️</span> Reacciones: {{ publicacion.reactions.likes }}</p>
         </div>
+  
+        <!-- Botón para mostrar/ocultar comentarios -->
+        <button class="btn btn-secondary" (click)="toggleComentarios(publicacion)">
+          {{ publicacion.mostrarComentarios ? 'Ocultar comentarios' : 'Ver comentarios' }}
+        </button>
       </div>
   
       <!-- Comentarios de la Publicación -->
-      <div class="card-footer">
+      <div class="card-footer" *ngIf="publicacion.mostrarComentarios">
         <h5>Comentarios</h5>
         <div *ngIf="publicacion.comentarios && publicacion.comentarios.length > 0; else noComentarios">
           <ul class="list-group">
