@@ -1,1 +1,29 @@
-<p>publicaciones works!</p>
+<div *ngFor="let publicacion of publicaciones">
+    <div class="card mb-3">
+      <div class="card-body">
+        <h4 class="card-title">{{ publicacion.title }}</h4>
+        <p class="card-text">{{ publicacion.body }}</p>
+        
+        <!-- Mostrar cantidad de reacciones -->
+        <div *ngIf="publicacion.reactions">
+          <p><span class="reactions-icon">❤️</span> Reacciones: {{ publicacion.reactions.likes }}</p>
+        </div>
+      </div>
+  
+      <!-- Comentarios de la Publicación -->
+      <div class="card-footer">
+        <h5>Comentarios</h5>
+        <div *ngIf="publicacion.comentarios && publicacion.comentarios.length > 0; else noComentarios">
+          <ul class="list-group">
+            <li *ngFor="let comentario of publicacion.comentarios" class="list-group-item">
+              <strong>{{ comentario.user.fullName }}</strong>: {{ comentario.body }}
+            </li>
+          </ul>
+        </div>
+        <ng-template #noComentarios>
+          <p>No hay comentarios para esta publicación.</p>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+  

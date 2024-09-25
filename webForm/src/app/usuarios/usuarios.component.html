@@ -1,0 +1,10 @@
+<ng-container *ngIf="usuario">
+    <p><strong>Nombre:</strong> {{usuario.firstName}} {{usuario.lastName}}</p>
+    <p><strong>Edad:</strong> {{usuario.age}}</p>
+    <p><strong>Email:</strong> {{usuario.email}}</p>
+    <h2>Publicaciones</h2>
+  </ng-container>
+  <ng-container *ngIf="!usuario">
+    <p>Usuario no encontrado.</p>
+  </ng-container>
+  

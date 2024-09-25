@@ -1,7 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
-import { mergeMap, Observable, of } from 'rxjs';
-import { Post } from 'src/app/models/publicaciones';
+import { mergeMap, of } from 'rxjs';
+import { Comentario } from 'src/app/models/comentarios';
+import { Publicacion } from 'src/app/models/publicaciones';
+
 import { Usuario } from 'src/app/models/usuarios';
 
 @Component({
@@ -10,57 +12,63 @@ import { Usuario } from 'src/app/models/usuarios';
   styleUrls: ['./body.component.css']
 })
 export class BodyComponent {
-  
-  root_url="https://dummyjson.com"
-  txtUser:string = "";
 
-  constructor(private http: HttpClient){}
-
-  posts: Post[] | null = null;
+  root_url = "https://dummyjson.com";
+  txtUser: string = "";
   usuario: Usuario | null = null;
-  //user$: Observable<any> = new Observable();
+  publicaciones: Publicacion[] = [];
 
-  buscarUsuario(){
-    this.http.get(`${this.root_url}/users/search?q=${this.txtUser}`).subscribe({
-      next: (response: any) => {
+  constructor(private http: HttpClient) {}
+
+  buscarUsuario() {
+    this.http.get(`${this.root_url}/users/search?q=${this.txtUser}`).pipe(
+      mergeMap((response: any) => {
         if (response.users && response.users.length > 0) {
           this.usuario = response.users[0];
-          if (this.usuario?.id !== undefined) {
-            console.log(this.usuario.id);
-            this.getPost(this.usuario.id);
-          }
+          // Retorna un observable de la solicitud de publicaciones
+          return this.http.get(`${this.root_url}/posts/user/${this.usuario!.id}`);
         } else {
           this.usuario = null;
-        }
-        }
-    })
-
-    //this.getUserPosts()
-  }
-
-  getPost(id:number){
-    console.log("Buscando Posts")
-    this.http.get(this.root_url + 'posts/user/' + id).subscribe((postInfo: any) => {
-      for(let i = 0; i < postInfo.length; i++){
-        this.posts![i] = postInfo[i]
-      }
-    })
-  }
-
-  getUserPosts(){
-    this.http.get<Usuario>(this.root_url + "/users/search?q=" + this.txtUser).pipe(
-      mergeMap((userInfo: any) => {
-        if(userInfo.length > 0){
-          this.usuario = userInfo[0];
-          return this.http.get<Post>(this.root_url + "/user/" + this.usuario!.id)
-        }else{
-          this.usuario = null;
-          return of(0);
+          // Retorna un observable vacío para evitar el error
+          return of({ posts: [] });
         }
       })
-    ).subscribe((postInfo: any) => {
-      this.posts![0] = postInfo[0];
-    })
+    ).subscribe({
+      next: (postInfo: any) => {
+        // Asegúrate de que accedes a los posts correctamente
+        this.publicaciones = postInfo.posts;
+        this.getComentariosParaPosts(this.publicaciones);
+      },
+      error: (err) => {
+        console.error('Error fetching user or posts', err);
+      }
+    });
   }
+  
 
+  //No lo uso, ya guardo los post al buscar al usuario
+  getPosts(userId: number) {
+    this.http.get(`${this.root_url}/posts/user/${userId}`).subscribe({
+      next: (postInfo: any) => {
+        this.publicaciones = postInfo.map((post: Publicacion) => ({
+          ...post,
+          comentarios: post.comentarios || []  // Asegura que siempre sea un arreglo
+        }));
+      },
+      error: (err) => {
+        console.error('Error fetching posts', err);
+      }
+    });
+  }
+  
+  
+  
+
+  getComentariosParaPosts(posts: Publicacion[]) {
+    posts.forEach(post => {
+      this.http.get<Comentario[]>(`${this.root_url}/comments/post/${post.id}`).subscribe({
+        next: (comentarios: Comentario[]) => post.comentarios = comentarios
+      });
+    });
+  }
 }
