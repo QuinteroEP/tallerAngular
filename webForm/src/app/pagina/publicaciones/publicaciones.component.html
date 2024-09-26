@@ -1,12 +1,14 @@
-<div *ngFor="let publicacion of publicaciones">
-    <div class="card mb-3">
+<div id="posts" *ngFor="let publicacion of publicaciones">
+  <div *ngIf="publicaciones && publicaciones.length > 0; else noPosts">
+    <div class="card mb-3"></div>
       <div class="card-body">
-        <h4 class="card-title">{{ publicacion.title }}</h4>
+        <h4 class="card-title size25">Titulo: {{ publicacion.title }}</h4>
         <p class="card-text">{{ publicacion.body }}</p>
         
         <!-- Mostrar cantidad de reacciones -->
-        <div *ngIf="publicacion.reactions">
-          <p><span class="reactions-icon">❤️</span> Reacciones: {{ publicacion.reactions.likes }}</p>
+        <div id="likes" *ngIf="publicacion.reactions">
+          <p><span class="reactions-icon">❤️</span> {{ publicacion.reactions.likes }}</p>
+          <p><span class="reactions-icon">🖤</span> {{ publicacion.reactions.dislikes }}</p>
         </div>
   
         <!-- Botón para mostrar/ocultar comentarios -->
@@ -16,19 +18,18 @@
       </div>
   
       <!-- Comentarios de la Publicación -->
-      <div class="card-footer" *ngIf="publicacion.mostrarComentarios">
-        <h5>Comentarios</h5>
+      <div id="coments" class="card-footer" *ngIf="publicacion.mostrarComentarios">
+        <h5 class="size25" >Comentarios</h5>
         <div *ngIf="publicacion.comentarios && publicacion.comentarios.length > 0; else noComentarios">
-          <ul class="list-group">
-            <li *ngFor="let comentario of publicacion.comentarios" class="list-group-item">
-              <strong>{{ comentario.user.fullName }}</strong>: {{ comentario.body }}
-            </li>
-          </ul>
+          <app-comentarios [comentarios]="publicacion.comentarios" ></app-comentarios>
         </div>
         <ng-template #noComentarios>
-          <p>No hay comentarios para esta publicación.</p>
+          <p class="italic">No hay comentarios para esta publicación.</p>
         </ng-template>
       </div>
     </div>
+
+    <ng-template #noPosts>
+      <p class="italic">No hay publicaciónes de este usuario.</p>
+    </ng-template>
   </div>
-  

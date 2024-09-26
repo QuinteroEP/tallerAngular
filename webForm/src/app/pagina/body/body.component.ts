@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
-import { mergeMap, of } from 'rxjs';
+import { catchError, forkJoin, mergeMap, of } from 'rxjs';
 import { Comentario } from 'src/app/models/comentarios';
 import { Publicacion } from 'src/app/models/publicaciones';
 
@@ -17,6 +17,7 @@ export class BodyComponent {
   txtUser: string = "";
   usuario: Usuario | null = null;
   publicaciones: Publicacion[] = [];
+  comentarios: Comentario[] = [];
 
   constructor(private http: HttpClient) {}
 
@@ -61,14 +62,29 @@ export class BodyComponent {
     });
   }
   
-  
-  
-
-  getComentariosParaPosts(posts: Publicacion[]) {
-    posts.forEach(post => {
-      this.http.get<Comentario[]>(`${this.root_url}/comments/post/${post.id}`).subscribe({
-        next: (comentarios: Comentario[]) => post.comentarios = comentarios
+    getComentariosParaPosts(posts: Publicacion[]) {
+      if (posts.length === 0) return; // Early return if no posts
+    
+      const commentRequests = posts.map(post =>
+        this.http.get<{ comments: Comentario[] }>(`${this.root_url}/comments/post/${post.id}`)
+          .pipe(
+            catchError(err => {
+              console.error(`Error fetching comments for post ${post.id}`, err);
+              return of({ comments: [] });
+            })
+          )
+      );
+    
+      forkJoin(commentRequests).subscribe({
+        next: (comentariosArray) => {
+          posts.forEach((post, index) => {
+            post.comentarios = comentariosArray[index].comments; // Extract comments from the response
+          });
+        },
+        error: (err) => {
+          console.error('Error fetching comments', err);
+        }
       });
-    });
   }
+
 }

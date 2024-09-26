@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { Comentario } from 'src/app/models/comentarios';
 
 @Component({
   selector: 'app-comentarios',
@@ -6,5 +7,9 @@ import { Component } from '@angular/core';
   styleUrls: ['./comentarios.component.css']
 })
 export class ComentariosComponent {
+  @Input() comentarios: Comentario[] = []
 
+  ngOnChanges() {
+    console.log('Received comentarios:', this.comentarios);
+  }
 }
