@@ -1,0 +1,9 @@
+#comment{
+    background-color: azure;
+    border: solid black;
+    margin: 10px;
+}
+
+li{
+    list-style-type: none;
+}

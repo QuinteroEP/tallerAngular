@@ -7,13 +7,15 @@ import {HttpClientModule} from '@angular/common/http';
 import { BodyComponent } from './pagina/body/body.component';
 import { PublicacionesComponent } from './pagina/publicaciones/publicaciones.component';
 import { ComentariosComponent } from './pagina/comentarios/comentarios.component';
+import { UsuariosComponent } from './usuarios/usuarios.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     BodyComponent,
     PublicacionesComponent,
-    ComentariosComponent
+    ComentariosComponent,
+    UsuariosComponent
   ],
   imports: [
     BrowserModule,

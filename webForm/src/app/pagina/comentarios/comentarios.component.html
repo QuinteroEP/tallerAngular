@@ -1,1 +1,12 @@
-<p>comentarios works!</p>
+<div id="comment">
+    <ul class="list-group">
+        <li *ngFor="let comentario of comentarios ?? []" class="list-group-item">
+          <strong>{{ comentario.user.fullName }}</strong> <br> {{ comentario.body }}
+
+          <div id="likes" *ngIf="comentario.likes">
+            <p><span class="reactions-icon">❤️</span> {{ comentario.likes }}</p>
+          </div>
+
+        </li>
+      </ul>
+</div>

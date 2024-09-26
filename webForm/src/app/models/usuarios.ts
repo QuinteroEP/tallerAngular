@@ -4,4 +4,5 @@ export interface Usuario{
     lastName:string,
     age:number,
     email:string
+    
 }
